@@ -6,8 +6,6 @@ Summary of the post goes here
 <h1>Hello World - Blog Post</h1>
 <p>Some text now <strong>BOLDER TOO</strong></p>
 Line 4
-And something else goes here with no HTML Oh yeah!
+And something else goes here with no HTML
 Line 6
 <ul><li>Dot point one</li></ul>
-
-<p>Kate Feeney added this line</p>

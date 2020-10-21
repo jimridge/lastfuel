@@ -1,0 +1,102 @@
+Status goes here
+LastFuel :: Canyoning
+October 21, 2020
+A canyoning story
+<!-- POST GOES BELOW THE LINE - IN HTML -->
+
+
+
+
+
+
+<div id="map-response" style="width:100%; height: 100px;"></div>
+<div id='map' style='width: 100%; height: 600px;'></div>
+
+<!-- <script src='https://api.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.js'></script> -->
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<!-- <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' /> -->
+<script type="text/javascript">
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiZWdkaXIiLCJhIjoiY2l5amlnNG53MDYwZDMzbWdoZXhqcWR0YSJ9.8na3Jj6e3gfgmVVYxwx9nw';
+
+// UN COMMENT THE BELOW CODE TO RE-ADD THE MAP TO THE HOMEPAGE
+
+
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9',
+    center: [149.119949, -32.114340], // starting position
+    zoom: 5 // starting zoom
+});
+
+
+map.on('load', function() {
+
+
+    map.addSource('canyons_data', {
+      type: 'geojson',
+      data: '/data/map.json'
+    });
+    map.addLayer({
+      'id': 'canyons',
+      'type': 'circle',
+      'source': 'canyons_data',
+      "paint": {
+          // "circle-radius": 5.5,
+            'circle-radius': {
+                'base': 5.5,
+                'stops': [
+                    [12, 5.5],
+                    [22, 180]
+                ]
+            },
+          "circle-stroke-width": 1,
+          "circle-stroke-color": "#000000",
+          // "circle-color": "#993399"
+            'circle-color': [
+            'match',
+            ['get', 'status'],
+            'Complete',
+            '#2645D1',
+            'Easy',
+            '#A5E03F',
+            'Medium',
+            '#FF8C2E',
+            'Hard',
+            '#F41625',
+            /* other */ '#ccc'
+            ]
+      }
+    });
+
+
+});
+
+
+map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['canyons'] });
+    if (!features.length) {
+      return;
+    }
+    var feature = features[0];
+    document.getElementById("map-response").innerHTML = feature.properties.name;
+});
+
+map.on('mousemove', function (e) {
+    if (!map.loaded()) return;
+
+    var features = map.queryRenderedFeatures(e.point, { layers: ['canyons'] });
+    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+});
+
+
+
+</script>
+
+
+
+<!-- <p>Some text now <strong>BOLDER TOO</strong></p>
+Line 4
+And something else goes here with no HTML
+Line 6
+<ul><li>Dot point one</li></ul> -->

@@ -37,6 +37,9 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	fsd := http.FileServer(http.Dir("data"))
+	http.Handle("/data/", http.StripPrefix("/data/", fsd))
+
 	// BESPOKE FUNCTIONS FOR HANDLING OTHER URLS
 	http.HandleFunc("/blog/", BlogView)
 	http.HandleFunc("/", RootView)
@@ -129,11 +132,31 @@ func RootView(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-	content := template.HTML("LastFuel. Canyoning. Welcome")
 
-	p := PageVariables{Title: "Home", Year: GetCurrentTime("2006"), Content: content}
+	f := "posts/home.html"
+	fileread, _ := ioutil.ReadFile(f)
+	lines := strings.Split(string(fileread), "\n")
+	// fmt.Println(lines)
+	// return
+	status := string(lines[0])
+	title := string(lines[1])
+	date := string(lines[2])
+	summary := string(lines[3])
+	body := strings.Join(lines[4:len(lines)], "\n")
+	htmlBody := template.HTML([]byte(body))
+	p := Post{status, title, date, summary, htmlBody, r.URL.Path[1:], GetCurrentTime("2006")}
 
-	err := templates.ExecuteTemplate(w, "default.html", p)
+
+
+
+
+
+
+	// content := template.HTML("LastFuel. Canyoning. Welcome")
+
+	// p := PageVariables{Title: "Home", Year: GetCurrentTime("2006"), Content: content}
+
+	err := templates.ExecuteTemplate(w, "post.html", p)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
     }

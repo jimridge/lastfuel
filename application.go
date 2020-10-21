@@ -41,7 +41,7 @@ func main() {
 	http.HandleFunc("/blog/", BlogView)
 	http.HandleFunc("/", RootView)
 
-	err := http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(":5000", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

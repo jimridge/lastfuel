@@ -6,6 +6,7 @@ import (
 	"log"
 	"io/ioutil"
 	"strings"
+	"time"
 	// "path/filepath"
 	// "fmt"
 )
@@ -40,7 +41,7 @@ func main() {
 	http.HandleFunc("/blog/", BlogView)
 	http.HandleFunc("/", RootView)
 
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":80", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
@@ -128,7 +129,7 @@ func RootView(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-	content := template.HTML("Log in to access the project tracker. <a href=\"/login\">Login</a>")
+	content := template.HTML("LastFuel. Canyoning. Welcome")
 
 	p := PageVariables{Title: "Home", Year: GetCurrentTime("2006"), Content: content}
 
@@ -136,4 +137,37 @@ func RootView(w http.ResponseWriter, r *http.Request) {
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
     }
+}
+
+func ErrorHandler(w http.ResponseWriter, r *http.Request, status int) {
+
+    type PageVariables struct {
+        Title string
+        Year string
+        Content string
+    }
+
+    w.WriteHeader(status)
+    if status == http.StatusNotFound {
+        p := PageVariables{Title: "404 Not Found", Year: GetCurrentTime("2006")}
+
+        err := templates.ExecuteTemplate(w, "404.html", p)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+        }
+    }
+    if status == http.StatusUnauthorized {
+        redirect(w, r, "/login")
+    }
+}
+
+func GetCurrentTime(timeFormat string) (string){
+	time := time.Now().Local()
+	return time.Format(timeFormat)
+}
+
+func redirect(w http.ResponseWriter, r *http.Request, url string) {
+
+	var currentPath string = r.URL.Path
+    http.Redirect(w, r, url + "?redirect=" + currentPath, 303)
 }

@@ -5,3 +5,4 @@ main
 application
 lastfuel.exe
 bin
+__pycache__

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+<div id='lastfuel-map' style='width: 100%;'></div>
+<div id="map-response"></div>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<script type="text/javascript">
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiZWdkaXIiLCJhIjoiY2l5amlnNG53MDYwZDMzbWdoZXhqcWR0YSJ9.8na3Jj6e3gfgmVVYxwx9nw';
+
+// Variable to test for mobile device
+let isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
+
+// Variables to detect window dimensions
+var w=window,
+d = document,
+e = d.documentElement,
+g = d.getElementsByTagName('body')[0],
+x = w.innerWidth||e.clientWidth||g.clientWidth,
+y = w.innerHeight||e.clientHeight||g.clientHeight;
+
+// Set up default variables
+var map_centre = [150.3079828,-33.5449968],
+map_zoom = 6,
+map_style = 'mapbox://styles/mapbox/streets-v9',
+map_width = x,
+map_height = y/2;
+map_base_circle_radius = 5.5;
+
+
+document.getElementById("lastfuel-map").style.height = map_height + "px";
+document.getElementById("lastfuel-map").style.width = map_width + "px";
+
+
+
+if (isMobile) {
+		map_zoom = 7.5;
+		map_base_circle_radius = 10;
+}
+
+var map = new mapboxgl.Map({
+		container: 'lastfuel-map',
+		style: map_style,
+		center: map_centre, // starting position
+		zoom: map_zoom // starting zoom
+});
+
+
+map.on('load', function() {
+
+
+
+		map.addSource('canyons_data', {
+			type: 'geojson',
+			data: '/data/map.json'
+		});
+		map.addLayer({
+			'id': 'canyons',
+			'type': 'circle',
+			'source': 'canyons_data',
+			"paint": {
+					// "circle-radius": 5.5,
+						'circle-radius': {
+								base: map_base_circle_radius,
+								stops: [[8, map_base_circle_radius + 1], [11, map_base_circle_radius + 6], [16, 40]]
+								// 'base': map_base_circle_radius,
+								// 'stops': [
+								//     [12, map_base_circle_radius + 1],
+								//     [22, 180]
+								// ]
+						},
+					"circle-stroke-width": 1,
+					"circle-stroke-color": "#000000",
+					// "circle-color": "#993399"
+						'circle-color': [
+						'match',
+						['get', 'status'],
+						'Complete',
+						'#2645D1',
+						'Easy',
+						'#A5E03F',
+						'Medium',
+						'#FF8C2E',
+						'Hard',
+						'#F41625',
+						/* other */ '#ccc'
+						]
+			}
+		});
+
+
+});
+
+
+map.on('click', function (e) {
+		var features = map.queryRenderedFeatures(e.point, { layers: ['canyons'] });
+		if (!features.length) {
+				document.getElementById("map-response").innerHTML = "";
+				return;
+		}
+		var feature = features[0];
+		document.getElementById("map-response").innerHTML = "<h2>" + feature.properties.name + "</h2><p>" + feature.properties.description + "</p>";
+});
+
+map.on('mousemove', function (e) {
+		if (!map.loaded()) return;
+
+		var features = map.queryRenderedFeatures(e.point, { layers: ['canyons'] });
+		map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+});
+
+
+
+
+
+</script>
+
+
+
+{% endblock %}

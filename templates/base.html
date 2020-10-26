@@ -3,10 +3,25 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>{{.Title}}</title>
+	{% if title %}
+      <title>{{ title }} :: LastFuel</title>
+    {% else %}
+      <title>LastFuel</title>
+    {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="/static/css/app.min.css">
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 
 <body>
+    <h1>LastFuel :: Canyoning</h1>
+    <p>A canyoning story</p>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        <p>Copyright &#169; LastFuel {{ year }}</p>
+    </footer>
+</body>
+
+</html>

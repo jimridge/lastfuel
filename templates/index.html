@@ -3,7 +3,6 @@
 {% block content %}
 
 
-
 <div id='lastfuel-map' style='width: 100%;'></div>
 <div id="map-response"></div>
 
@@ -26,7 +25,8 @@ y = w.innerHeight||e.clientHeight||g.clientHeight;
 // Set up default variables
 var map_centre = [150.3079828,-33.5449968],
 map_zoom = 6,
-map_style = 'mapbox://styles/mapbox/streets-v9',
+// map_style = 'mapbox://styles/mapbox/streets-v11',
+map_style = 'mapbox://styles/mapbox/outdoors-v11',
 map_width = x,
 map_height = y/2;
 map_base_circle_radius = 5.5;
@@ -50,8 +50,8 @@ var map = new mapboxgl.Map({
 });
 
 
-map.on('load', function() {
 
+map.on('load', function() {
 
 
 		map.addSource('canyons_data', {
@@ -112,8 +112,6 @@ map.on('mousemove', function (e) {
 		var features = map.queryRenderedFeatures(e.point, { layers: ['canyons'] });
 		map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 });
-
-
 
 
 

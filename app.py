@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask import jsonify
 
+from gpx_converter import Converter
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -24,7 +25,27 @@ def data(name=None):
     if name == "map.json":
 
         d={"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":["150.3079828","-33.5449968"]},"properties":{"id":"1","name":"Dalpura Canyon", "description": "Dalpura is a relatively short canyon on the north side of the Grose Valley. It has one short abseil and the burnt out sections at the beginning of the canyon are a stark reminder of the late 2019/early 2020 bushfires. The walk in is not particularly tough, but a moderate level of fitness is required for the uphill walk out. A half day canyon!", "status":"Easy"}}]
-}
+        }
+        return jsonify(d)
+
+    if name == "siloam.json":
+
+        gpx_dict = Converter(input_file='./data/activity_5655491821.gpx').gpx_to_dictionary(latitude_key='latitude', longitude_key='longitude')
+
+        coordinates = []
+        for i in range(0, len(gpx_dict['latitude'])):
+            # print("{} -- {}".format(gpx_dict['latitude'][i], gpx_dict['longitude'][i]))
+            point = [gpx_dict['longitude'][i], gpx_dict['latitude'][i]]
+            coordinates.append(point)
+
+        d={ 'type': 'Feature',
+            'properties': {"id":"1","name":"Pool of Siloam", "description": "A quick descent to a beautiful small, sheltered pool and waterfall. The water is icy cold, and there is a good climb out to the east to test your fitness!", "status":"Easy"},
+            'geometry': {
+            'type': 'LineString',
+            'coordinates': coordinates,
+            }
+        }
+
         return jsonify(d)
 
     return

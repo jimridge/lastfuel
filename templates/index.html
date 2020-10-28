@@ -23,9 +23,10 @@ x = w.innerWidth||e.clientWidth||g.clientWidth,
 y = w.innerHeight||e.clientHeight||g.clientHeight;
 
 // Set up default variables
-var map_centre = [150.3079828,-33.5449968],
-map_zoom = 6,
-// map_style = 'mapbox://styles/mapbox/streets-v11',
+// var map_centre = [150.3079828,-33.5449968],
+var map_centre = [150.3354317229241, -33.724166471511126],
+// map_zoom = 6,
+map_zoom = 13,
 map_style = 'mapbox://styles/mapbox/outdoors-v11',
 map_width = x,
 map_height = y/2;
@@ -38,7 +39,8 @@ document.getElementById("lastfuel-map").style.width = map_width + "px";
 
 
 if (isMobile) {
-		map_zoom = 7.5;
+		// map_zoom = 7.5;
+		map_zoom = 13;
 		map_base_circle_radius = 10;
 }
 
@@ -56,44 +58,73 @@ map.on('load', function() {
 
 		map.addSource('canyons_data', {
 			type: 'geojson',
-			data: '/data/map.json'
+			// data: '/data/map.json'
+			data: '/data/siloam.json'
 		});
 		map.addLayer({
 			'id': 'canyons',
-			'type': 'circle',
+			'type': 'line',
 			'source': 'canyons_data',
-			"paint": {
-					// "circle-radius": 5.5,
-						'circle-radius': {
-								base: map_base_circle_radius,
-								stops: [[8, map_base_circle_radius + 1], [11, map_base_circle_radius + 6], [16, 40]]
-								// 'base': map_base_circle_radius,
-								// 'stops': [
-								//     [12, map_base_circle_radius + 1],
-								//     [22, 180]
-								// ]
-						},
-					"circle-stroke-width": 1,
-					"circle-stroke-color": "#000000",
-					// "circle-color": "#993399"
-						'circle-color': [
-						'match',
-						['get', 'status'],
-						'Complete',
-						'#2645D1',
-						'Easy',
-						'#A5E03F',
-						'Medium',
-						'#FF8C2E',
-						'Hard',
-						'#F41625',
-						/* other */ '#ccc'
-						]
+			'layout': {
+			'line-join': 'round',
+			'line-cap': 'round'
+		},
+			'paint': {
+			'line-color': '#A83797',
+			'line-width': 4
 			}
 		});
 
+		// map.addLayer({
+		// 	'id': 'canyons',
+		// 	'type': 'circle',
+		// 	'source': 'canyons_data',
+		// 	"paint": {
+		// 			// "circle-radius": 5.5,
+		// 				'circle-radius': {
+		// 						base: map_base_circle_radius,
+		// 						stops: [[8, map_base_circle_radius + 1], [11, map_base_circle_radius + 6], [16, 40]]
+		// 						// 'base': map_base_circle_radius,
+		// 						// 'stops': [
+		// 						//     [12, map_base_circle_radius + 1],
+		// 						//     [22, 180]
+		// 						// ]
+		// 				},
+		// 			"circle-stroke-width": 1,
+		// 			"circle-stroke-color": "#000000",
+		// 			// "circle-color": "#993399"
+		// 				'circle-color': [
+		// 				'match',
+		// 				['get', 'status'],
+		// 				'Complete',
+		// 				'#2645D1',
+		// 				'Easy',
+		// 				'#A5E03F',
+		// 				'Medium',
+		// 				'#FF8C2E',
+		// 				'Hard',
+		// 				'#F41625',
+		// 				/* other */ '#ccc'
+		// 				]
+		// 	}
+		// });
+
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 map.on('click', function (e) {
@@ -103,6 +134,7 @@ map.on('click', function (e) {
 				return;
 		}
 		var feature = features[0];
+		console.log(features)
 		document.getElementById("map-response").innerHTML = "<h2>" + feature.properties.name + "</h2><p>" + feature.properties.description + "</p>";
 });
 

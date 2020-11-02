@@ -6,3 +6,5 @@ application
 lastfuel.exe
 bin
 __pycache__
+*.sublime-project
+*.sublime-workspace
